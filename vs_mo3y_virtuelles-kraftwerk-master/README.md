@@ -1,6 +1,5 @@
 # SS21 - Verteilte Systeme 
-### **Maintainer** Aytunc Yilmaz 743831
-### **Maintainer** Jusuf Jusufovic 755481
+### **Maintainer** Jusuf Jusufovic
 <br>
 A university project for a virtual power plant, which has as a learning objective, the management by communication protocols "http, udp, tcp". 
 <br> </br>

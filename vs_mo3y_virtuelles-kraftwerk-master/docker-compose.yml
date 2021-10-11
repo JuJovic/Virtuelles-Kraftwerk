@@ -1,0 +1,224 @@
+version: '3.7'
+
+x-common-variables: &common-variables
+  MQTT_PORT: 1883
+  BUFFER_SIZE: 256 # HAVE TO BE GREATER THAN 12
+  THRIFT_PORT: 9090
+
+x-component-common-variables: &component-common-variables
+  DESTINATION: "central"
+
+services:
+  mosquitto:
+    image: "eclipse-mosquitto:1.6.12"
+    container_name: "Mosquitto"
+    ports:
+      - "1884:1884"
+      - "9001:9001"
+    volumes:
+      - ./broker/mosquitto.conf:/mosquitto/config/mosquitto.conf
+  client:
+    image: "client:latest"
+    container_name: "Client"
+    tty: true
+    stdin_open: true
+    environment:
+      <<: *common-variables
+      THRIFT_HOST: "central"
+  central:
+    image: "central:latest"
+    container_name: "Zentrale1"
+    ports:
+      - 1234:1234
+    environment:
+      <<: *common-variables
+      TCP_PORT: 1234
+      NAME: "central1"
+      PRODUCER: "Solar-System1;Wind-Power-Plant1;Coal-Power-Plant1"
+      SLAVES: "central2;central3"
+      MQTT_TOPIC: "power/component/1/+/info"
+  consumer_factory:
+    image: "component:latest"
+    container_name: "Fabrik"
+    environment:
+      <<: *common-variables
+      <<: *component-common-variables
+      ID: 1
+      NAME: "Fabrik"
+      TYPE: "CONSUMER_FACTORY"
+      MQTT_TOPIC: "power/component/1/1/info"
+  consumer_household:
+    image: "component:latest"
+    container_name: "Haushalt"
+    environment:
+      <<: *common-variables
+      <<: *component-common-variables
+      ID: 2
+      NAME: "Haushalt"
+      TYPE: "CONSUMER_HOUSEHOLD"
+      MQTT_TOPIC: "power/component/1/2/info"
+  producer_wind:
+    image: "component:latest"
+    container_name: "Windkraftwerk1"
+    environment:
+      <<: *common-variables
+      <<: *component-common-variables
+      ID: 3
+      NAME: "Windkraftwerk1"
+      TYPE: PROD_WIND
+      MAX_CAPACITY: 10000
+      MQTT_TOPIC: "power/component/1/3/info"
+  producer_sun:
+    image: "component:latest"
+    container_name: "Solarwerk1"
+    environment:
+      <<: *common-variables
+      <<: *component-common-variables
+      ID: 4
+      NAME: "Solarwerk1"
+      TYPE: PROD_SUN
+      MAX_CAPACITY: 20000
+      MQTT_TOPIC: "power/component/1/4/info"
+  producer_coal:
+    image: "component:latest"
+    container_name: "Kohlewerk1"
+    environment:
+      <<: *common-variables
+      <<: *component-common-variables
+      ID: 5
+      NAME: "Kohlewerk1"
+      TYPE: PROD_COAL
+      MAX_CAPACITY: 50000
+      MQTT_TOPIC: "power/component/1/5/info"
+
+  central2:
+    image: "central:latest"
+    container_name: "Zentrale2"
+    ports:
+      - 1235:1235
+    environment:
+      <<: *common-variables
+      TCP_PORT: 1235
+      NAME: "central2"
+      PRODUCER: "Solar-System2;Wind-Power-Plant2;Coal-Power-Plant2"
+      SLAVES: "central1;central3"
+      MQTT_TOPIC: "power/component/2/+/info"
+  consumer_factory2:
+    image: "component:latest"
+    container_name: "Fabrik2"
+    environment:
+      <<: *common-variables
+      <<: *component-common-variables
+      ID: 6
+      NAME: "Fabrik2"
+      TYPE: "CONSUMER_FACTORY"
+      MQTT_TOPIC: "power/component/2/6/info"
+  consumer_household2:
+    image: "component:latest"
+    container_name: "Haushalt2"
+    environment:
+      <<: *common-variables
+      <<: *component-common-variables
+      ID: 7
+      NAME: "Haushalt2"
+      TYPE: "CONSUMER_HOUSEHOLD"
+      MQTT_TOPIC: "power/component/2/7/info"
+  producer_wind2:
+    image: "component:latest"
+    container_name: "Windkraftwerk2"
+    environment:
+      <<: *common-variables
+      <<: *component-common-variables
+      ID: 8
+      NAME: "Windkraftwerk2"
+      TYPE: PROD_WIND
+      MAX_CAPACITY: 10000
+      MQTT_TOPIC: "power/component/2/8/info"
+  producer_sun2:
+    image: "component:latest"
+    container_name: "Solarwerk2"
+    environment:
+      <<: *common-variables
+      <<: *component-common-variables
+      ID: 9
+      NAME: "Solarwerk2"
+      TYPE: PROD_SUN
+      MAX_CAPACITY: 20000
+      MQTT_TOPIC: "power/component/2/9/info"
+  producer_coal2:
+    image: "component:latest"
+    container_name: "Kohlewerk2"
+    environment:
+      <<: *common-variables
+      <<: *component-common-variables
+      ID: 10
+      NAME: "Kohlewerk2"
+      TYPE: PROD_COAL
+      MAX_CAPACITY: 50000
+      MQTT_TOPIC: "power/component/2/10/info"
+
+  central3:
+    image: "central:latest"
+    container_name: "Zentrale3"
+    ports:
+      - 1236:1236
+    environment:
+      <<: *common-variables
+      TCP_PORT: 1236
+      NAME: "central3"
+      PRODUCER: "Solar-System3;Wind-Power-Plant3;Coal-Power-Plant3"
+      SLAVES: "central1;central2"
+      MQTT_TOPIC: "power/component/3/+/info"
+  consumer_factory3:
+    image: "component:latest"
+    container_name: "Fabrik3"
+    environment:
+      <<: *common-variables
+      <<: *component-common-variables
+      ID: 11
+      NAME: "Fabrik3"
+      TYPE: "CONSUMER_FACTORY"
+      MQTT_TOPIC: "power/component/3/11/info"
+  consumer_household3:
+    image: "component:latest"
+    container_name: "Haushalt3"
+    environment:
+      <<: *common-variables
+      <<: *component-common-variables
+      ID: 12
+      NAME: "Haushalt3"
+      TYPE: "CONSUMER_HOUSEHOLD"
+      MQTT_TOPIC: "power/component/3/12/info"
+  producer_wind3:
+    image: "component:latest"
+    container_name: "Windkraftwerk3"
+    environment:
+      <<: *common-variables
+      <<: *component-common-variables
+      ID: 13
+      NAME: "Windkraftwerk3"
+      TYPE: PROD_WIND
+      MAX_CAPACITY: 10000
+      MQTT_TOPIC: "power/component/3/13/info"
+  producer_sun3:
+    image: "component:latest"
+    container_name: "Solarwerk3"
+    environment:
+      <<: *common-variables
+      <<: *component-common-variables
+      ID: 14
+      NAME: "Solarwerk3"
+      TYPE: PROD_SUN
+      MAX_CAPACITY: 20000
+      MQTT_TOPIC: "power/component/3/14/info"
+  producer_coal3:
+    image: "component:latest"
+    container_name: "Kohlewerk3"
+    environment:
+      <<: *common-variables
+      <<: *component-common-variables
+      ID: 15
+      NAME: "Kohlewerk3"
+      TYPE: PROD_COAL
+      MAX_CAPACITY: 50000
+      MQTT_TOPIC: "power/component/3/15/info"
